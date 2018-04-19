@@ -12,4 +12,6 @@ public interface IDialogBehavior {
      * @return True if the action was successfully confirmed
      */
     boolean onConfirm();
+
+    boolean onCancel();
 }

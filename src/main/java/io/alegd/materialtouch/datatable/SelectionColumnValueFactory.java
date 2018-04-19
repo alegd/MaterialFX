@@ -34,6 +34,8 @@ public class SelectionColumnValueFactory<T> implements
             }
 
             dataTable.setToolbar(dataTable.getSelectedItems().size());
+            if (dataTable.getSelectedItems().size() == dataTable.getData().size())
+                dataTable.getSelectionHeader().setSelected(true);
         });
         return new SimpleObjectProperty(checkBox);
     }

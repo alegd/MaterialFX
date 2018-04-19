@@ -11,10 +11,10 @@ import javafx.util.Callback;
  */
 public class SelectionValueFactory<T> implements Callback<ListView<T>, ListCell<T>> {
 
-    private DataList dataTable;
+    private DataList dataList;
 
-    public SelectionValueFactory(DataList dataTable) {
-        this.dataTable = dataTable;
+    public SelectionValueFactory(DataList dataList) {
+        this.dataList = dataList;
     }
 
     @Override
@@ -24,13 +24,13 @@ public class SelectionValueFactory<T> implements Callback<ListView<T>, ListCell<
         checkBox.selectedProperty().bindBidirectional(item.selectedProperty());
         checkBox.setOnAction(event -> {
             if (item.isSelected()) {
-                dataTable.getSelectedItems().add(item);
+                dataList.getSelectedItems().add(item);
             } else {
-                dataTable.getSelectedItems().remove(item);
-//                dataTable.getSelectionHeader().selectedProperty().set(false);
+                dataList.getSelectedItems().remove(item);
+//                dataList.getSelectionHeader().selectedProperty().set(false);
             }
 
-//            dataTable.setToolbar(dataTable.getSelectedItems().size());
+//            dataList.setToolbar(dataList.getSelectedItems().size());
         });
         return new ListCell<>();
     }

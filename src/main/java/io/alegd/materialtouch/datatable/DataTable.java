@@ -189,7 +189,7 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
             TreeTableColumn<T, ?> firstColumn = treeTableView.getColumns().get(0);
             firstColumn.getStyleClass().add("after-checkbox-column");
             firstColumn.getStyleClass().remove("first-column");
-            firstColumn.prefWidthProperty().setValue(calculateWidthFromHeader(firstColumn, false));
+//            firstColumn.prefWidthProperty().setValue(calculateWidthFromHeader(firstColumn, false));
             treeTableView.getColumns().add(0, selectionColumn);
 
             contextualToolbar = new JFXToolbar();
@@ -263,8 +263,9 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
         if (treeTableView.getParent() != null) {
             if (treeTableView.getRoot().getChildren().isEmpty()) {
                 if (!showHeaderWithNoData) {
-                    ((Pane) treeTableView.getParent()).getChildren().clear();
-                    ((Pane) treeTableView.getParent()).getChildren().add(mEmptyState);
+                    wrapper.setTop(null);
+                    wrapper.setCenter(mEmptyState);
+                    wrapper.setBottom(null);
                 } else {
                     wrapper.setCenter(mEmptyState);
                 }

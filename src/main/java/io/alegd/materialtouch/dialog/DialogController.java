@@ -138,8 +138,10 @@ public class DialogController {
      * When user clicks cancel we just close the open dialog.
      */
     private void handleCancel() {
+        behavior.onCancel();
         mDialog.close();
     }
+
 
     /**
      * @param title The title of the dialog
