@@ -1,15 +1,15 @@
 package io.alegd.materialtouch;
 
 import com.jfoenix.controls.JFXCheckBox;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.util.Callback;
 
 /**
  * Class to hold configuration for checkboxes in TreeTableCell.
  */
-public class SelectionValueFactory<T> implements Callback<ListView<T>, ListCell<T>> {
+public class SelectionValueFactory<T> implements Callback<T, ObservableValue<Boolean>> {
 
     private DataList dataList;
 
@@ -18,8 +18,8 @@ public class SelectionValueFactory<T> implements Callback<ListView<T>, ListCell<
     }
 
     @Override
-    public ListCell<T> call(ListView<T> param) {
-        Selectable item = (Selectable) param.getItems();
+    public ObservableValue<Boolean> call(T param) {
+        Selectable item = (Selectable) param;
         CheckBox checkBox = new JFXCheckBox();
         checkBox.selectedProperty().bindBidirectional(item.selectedProperty());
         checkBox.setOnAction(event -> {
@@ -30,8 +30,10 @@ public class SelectionValueFactory<T> implements Callback<ListView<T>, ListCell<
 //                dataList.getSelectionHeader().selectedProperty().set(false);
             }
 
-//            dataList.setToolbar(dataList.getSelectedItems().size());
+            dataList.setToolbar(dataList.getSelectedItems().size());
+//            if (dataList.getSelectedItems().size() == dataList.getData().size())
+//                dataList.getSelectionHeader().setSelected(true);
         });
-        return new ListCell<>();
+        return new SimpleObjectProperty(checkBox);
     }
 }

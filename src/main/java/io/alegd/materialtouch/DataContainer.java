@@ -32,6 +32,8 @@ public abstract class DataContainer<T> {
 
     protected JFXToolbar contextualToolbar;
 
+    protected Label mCToolbarTitle;
+
     protected Exportable exportable;
 
     protected DataProvider dataProvider;

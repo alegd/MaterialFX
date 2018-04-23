@@ -31,8 +31,6 @@ import java.util.function.Function;
  */
 public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T> {
 
-    private Label mCToolbarTitle;
-
     private JFXTreeTableColumn<T, Boolean> selectionColumn;
 
     private JFXTreeTableColumn<T, String> actionColumn;
