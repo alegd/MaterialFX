@@ -16,7 +16,7 @@ public class SelectionColumnValueFactory<T> implements
 
     private DataTable dataTable;
 
-    public SelectionColumnValueFactory(DataTable dataTable) {
+    SelectionColumnValueFactory(DataTable dataTable) {
         this.dataTable = dataTable;
     }
 
@@ -33,7 +33,7 @@ public class SelectionColumnValueFactory<T> implements
                 dataTable.getSelectionHeader().selectedProperty().set(false);
             }
 
-            dataTable.setToolbar(dataTable.getSelectedItems().size());
+//            dataTable.setToolbar(dataTable.getSelectedItems().size());
             if (dataTable.getSelectedItems().size() == dataTable.getData().size())
                 dataTable.getSelectionHeader().setSelected(true);
         });

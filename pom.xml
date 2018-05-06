@@ -5,8 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.alegd</groupId>
-    <artifactId>materialtouch</artifactId>
+    <artifactId>material-touch</artifactId>
     <version>0.1</version>
+
+    <modules>
+        <module>lib</module>
+        <module>demo</module>
+    </modules>
 
     <build>
         <plugins>
@@ -77,15 +82,50 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <id>buildnumber</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <format>{0,number}</format>
+                    <items>
+                        <item>buildNumber</item>
+                    </items>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                    <revisionOnScmFailure>unknownbuild</revisionOnScmFailure>
+                </configuration>
+            </plugin>
         </plugins>
+
+        <finalName>
+            ${project.artifactId}-${project.version}.${buildNumber}
+        </finalName>
     </build>
+
+    <scm>
+        <connection>scm:svn:http://127.0.0.1/dummy</connection>
+        <developerConnection>scm:svn:https://127.0.0.1/dummy</developerConnection>
+        <tag>head</tag>
+        <url>http://127.0.0.1/dummy</url>
+    </scm>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/com.jfoenix/jfoenix -->
         <dependency>
             <groupId>com.jfoenix</groupId>
             <artifactId>jfoenix</artifactId>
-            <version>8.0.1</version>
+            <version>8.0.3</version>
         </dependency>
     </dependencies>
 </project>

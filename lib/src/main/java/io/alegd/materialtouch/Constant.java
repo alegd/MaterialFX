@@ -14,32 +14,7 @@ import java.io.InputStream;
  */
 public class Constant {
 
-    public static final String PRIMARY_STAGE = "stage";
-    public static final String ROOT = "content-root";
-    public static final String BUDGET_ROOT = "budget-root";
-    public static final String CONTENT_MAIN_FLOW = "ContentMainFlow";
-    public static final String CONTENT_MAIN_FLOW_HANDLER = "ContentMainFlowHandler";
-    public static final String INNER_FLOW = "ContentInnerFlow";
-    public static final String INNER_FLOW_HANDLER = "ContentInnerFlowHandler";
-    public static final String BUDGET_INNER_FLOW = "BudgetInnerFlow";
-    public static final String BUDGET_INNER_FLOW_HANDLER = "BudgetInnerFlowHandler";
-    public static final String CONTENT_PANE = "ContentPane";
-    public static final String DRAWER = "Drawer";
-    public static final String SETTINGS_PATH = ".config";
-    public static final String LAST_SELECTED_VIEW = "LastSelectedView";
-    public static final String LAST_SELECTED_INDEX = "LastSelectedIndex";
-    public static final String WIZARD  = "wizard";
-
-    public static final String ICONS_FILE = "MaterialIcons-Regular.svg";
-
-    public static final String BUDGET_DATA = "receipt-data";
-    public static final String BUDGET_FORM_VIEW = "receipt-form";
-    public static final String RECEIPT_DETAIL_VIEW = "receipt-detail";
-    public static double mWidth = 960;
-    public static double mHeight = 600;
-    public static String[] months = {"enero", "febrero", "marzo", "abril", "mayo",
-            "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"};
-
+    private static final String ICONS_FILE = "MaterialIcons-Regular.svg";
 
     /**
      * @param name the icon name according to Google Material Design Icons.
@@ -76,11 +51,12 @@ public class Constant {
         primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
     }
 
+
     public static void calculateScreenBounds() {
         try {
             Rectangle2D bounds = Screen.getScreens().get(0).getBounds();
-            mWidth = bounds.getWidth() / 1.5;
-            mHeight = bounds.getHeight() / 1.25;
+            double mWidth = bounds.getWidth() / 1.5;
+            double mHeight = bounds.getHeight() / 1.25;
         } catch (Exception e) {
             e.printStackTrace();
         }

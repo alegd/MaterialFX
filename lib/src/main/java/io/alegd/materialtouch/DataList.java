@@ -1,15 +1,17 @@
 package io.alegd.materialtouch;
 
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXToolbar;
 import com.jfoenix.effects.JFXDepthManager;
 import io.alegd.materialtouch.dataload.DataProvider;
 import io.alegd.materialtouch.dataload.Exportable;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 /**
@@ -26,9 +28,12 @@ public class DataList<T> extends DataContainer<T> {
      */
     private DataList(ListView<T> listView) {
         dataContainer = listView;
-
+        parentPane = (Pane) dataContainer.getParent();
         this.listView = listView;
-        this.card = (Pane) listView.getParent().getParent().lookup(".card");
+
+        if (parentPane != null)
+            if (parentPane.getParent() != null)
+                this.card = (Pane) parentPane.getParent().lookup(".card");
 
         listView.setItems(viewHolders);
     }
@@ -121,7 +126,31 @@ public class DataList<T> extends DataContainer<T> {
 
     @Override
     public void addSelectionBox() {
-        listView.setCellFactory(CheckBoxListCell.forListView(new SelectionValueFactory<>(this)));
+        ObservableList items = listView.getItems();
+
+        for (Object item : items) {
+            JFXCheckBox checkBox = new JFXCheckBox();
+            checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue)
+                    selectedItems.get().add((Selectable) item);
+                else
+                    selectedItems.get().remove(item);
+
+                setToolbar(selectedItems.size());
+            });
+
+            if (item instanceof HBox)
+                ((HBox) item).getChildren().add(0, checkBox);
+            else if (item instanceof Node) {
+                HBox wrapper = new HBox((Node) item);
+                int indexToReplace = listView.getItems().indexOf(item);
+                listView.getItems().set(indexToReplace, (T) wrapper);
+            } else {
+                Label wrapper = new Label(String.valueOf(item));
+                int indexToReplace = listView.getItems().indexOf(item);
+                listView.getItems().set(indexToReplace, (T) wrapper);
+            }
+        }
 
         contextualToolbar = new JFXToolbar();
         JFXDepthManager.setDepth(contextualToolbar, 0);

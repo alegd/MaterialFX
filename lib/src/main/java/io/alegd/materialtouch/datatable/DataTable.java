@@ -18,11 +18,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 
-import java.util.ArrayList;
 import java.util.function.Function;
 
 /**
@@ -57,8 +55,8 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
             if (parentPane.getParent() != null)
                 this.card = (Pane) parentPane.getParent().lookup(".card");
 
-        selectedItems = new ArrayList<>();
         setRowFactory();
+        withEmptyState(null, null, true);
     }
 
     /**
@@ -127,28 +125,6 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
     }
 
     /**
-     * Set main toolbar or contextual toolbar depending on how many selected items
-     * we have. Main toolbar is only showed when selected items count is 0.
-     *
-     * @param itemCount The amount of selected items.
-     */
-    public void setToolbar(int itemCount) {
-        if (itemCount > 0) {
-            if (itemCount > 1)
-                mCToolbarTitle.setText(itemCount + " elementos seleccionados");
-            else
-                mCToolbarTitle.setText(itemCount + " elemento seleccionado");
-
-            ((BorderPane) treeTableView.getParent()).setTop(contextualToolbar);
-        } else {
-            if (selectedItems != null)
-                selectedItems.clear();
-
-            ((BorderPane) treeTableView.getParent()).setTop(mainToolbar);
-        }
-    }
-
-    /**
      * Setup how to show values for cells in a column passed as parameter.
      *
      * @param column The column to be set
@@ -187,7 +163,6 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
             TreeTableColumn<T, ?> firstColumn = treeTableView.getColumns().get(0);
             firstColumn.getStyleClass().add("after-checkbox-column");
             firstColumn.getStyleClass().remove("first-column");
-//            firstColumn.prefWidthProperty().setValue(calculateWidthFromHeader(firstColumn, false));
             treeTableView.getColumns().add(0, selectionColumn);
 
             contextualToolbar = new JFXToolbar();
@@ -329,7 +304,7 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
             for (TreeItem<T> item : treeTableView.getRoot().getChildren()) {
                 Selectable selectableItem = (Selectable) item.getValue();
                 selectableItem.setSelected(true);
-                selectedItems.add(selectableItem);
+                selectedItems.get().add(selectableItem);
             }
         } else {
             for (TreeItem<T> item : treeTableView.getRoot().getChildren()) {
@@ -339,8 +314,6 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
 
             selectedItems.clear();
         }
-
-        setToolbar(selectedItems.size());
     }
 
 

@@ -5,6 +5,8 @@ import com.jfoenix.controls.JFXToolbar;
 import io.alegd.materialtouch.dataload.DataProvider;
 import io.alegd.materialtouch.dataload.Exportable;
 import io.alegd.materialtouch.pagination.JFXPagination;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -28,7 +30,7 @@ import java.util.List;
  */
 public abstract class DataContainer<T> {
 
-    protected JFXToolbar mainToolbar;
+    JFXToolbar mainToolbar;
 
     protected JFXToolbar contextualToolbar;
 
@@ -48,7 +50,7 @@ public abstract class DataContainer<T> {
 
     protected ObservableList<T> viewHolders;
 
-    protected List<Selectable> selectedItems;
+    protected ListProperty<Selectable> selectedItems;
 
     protected boolean paginate;
 
@@ -62,6 +64,22 @@ public abstract class DataContainer<T> {
     protected DataContainer() {
         if (viewHolders == null)
             viewHolders = FXCollections.observableArrayList();
+
+        if (selectedItems == null)
+            selectedItems = new SimpleListProperty<>(FXCollections.observableArrayList());
+
+        selectedItems.addListener((observable, oldValue, newValue) -> {
+            if (newValue.size() > 0) {
+                if (newValue.size() > 1)
+                    mCToolbarTitle.setText(newValue.size() + " elementos seleccionados");
+                else
+                    mCToolbarTitle.setText("1 elemento seleccionado");
+
+                ((BorderPane) dataContainer.getParent()).setTop(contextualToolbar);
+            } else {
+                ((BorderPane) dataContainer.getParent()).setTop(mainToolbar);
+            }
+        });
     }
 
     /**
@@ -212,8 +230,8 @@ public abstract class DataContainer<T> {
     }
 
 
-    public List<Selectable> getSelectedItems() {
-        return selectedItems;
+    public ObservableList<Selectable> getSelectedItems() {
+        return selectedItems.get();
     }
 
 
@@ -229,5 +247,10 @@ public abstract class DataContainer<T> {
 
     public BorderPane getWrapper() {
         return wrapper;
+    }
+
+
+    public void setShowHeaderWithNoData(boolean showHeader) {
+        this.showHeaderWithNoData = showHeader;
     }
 }
