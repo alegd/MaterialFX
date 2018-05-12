@@ -19,8 +19,6 @@
 
 # Gradle
 .idea/**/gradle.xml
-.idea/**/libraries
-
 # CMake
 cmake-build-debug/
 cmake-build-release/
@@ -89,3 +87,14 @@ buildNumber.properties
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
 
+/.idea/
+.idea/.name
+.idea/compiler.xml
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+demo/src/test/
+lib/src/main/java/test/
+lib/src/test/
+material-touch.iml
