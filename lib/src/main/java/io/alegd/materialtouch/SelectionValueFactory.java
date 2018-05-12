@@ -23,7 +23,7 @@ public class SelectionValueFactory<T> implements Callback<T, ObservableValue<Boo
         Selectable item = (Selectable) param;
         BooleanProperty observable = new SimpleBooleanProperty();
         CheckBox checkBox = new JFXCheckBox();
-//        checkBox.selectedProperty().bindBidirectional(item.selectedProperty());
+        checkBox.selectedProperty().bindBidirectional(item.selectedProperty());
         observable.addListener((obs, wasSelected, isNowSelected) -> {
             if (isNowSelected) {
                 dataList.getSelectedItems().add(item);

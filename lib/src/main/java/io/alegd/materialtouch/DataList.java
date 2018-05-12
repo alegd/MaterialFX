@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXListView;
 import io.alegd.materialtouch.dataload.Exportable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -21,6 +22,7 @@ public class DataList<T> extends DataContainer<T> {
     private T lastItem;
 
     private JFXButton selectAllButton = new JFXButton();
+    private ObservableList<Node> toolBarActions;
 
 
     public DataList() {
@@ -37,11 +39,12 @@ public class DataList<T> extends DataContainer<T> {
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((obs, oldVal, newVal) -> dataProvider.onItemSelected(null, newVal));
         setupSelectAllButton();
-        getContextualHeader().setRightItems(selectAllButton);
-        listView.getItems().addListener((ListChangeListener<? super T>) observable -> {
-            observable.next();
-            lastItem = observable.getList().get(observable.getTo() - 1);
-            addSelectionBox();
+
+        toolBarActions = getContextualHeader().getRightItems();
+        toolBarActions.addListener((ListChangeListener<? super Node>) observable -> {
+            if (!toolBarActions.contains(selectAllButton)) {
+                toolBarActions.add(0, selectAllButton);
+            }
         });
     }
 
@@ -107,29 +110,34 @@ public class DataList<T> extends DataContainer<T> {
 
 
     @Override
-    public void addSelectionBox() {
-        JFXCheckBox checkBox = new JFXCheckBox();
-        if (lastItem != null)
-            checkBox.selectedProperty().bindBidirectional(((Selectable) lastItem).selectedProperty());
-        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue)
-                selectedItems.get().add((Selectable) lastItem);
-            else
-                selectedItems.get().remove(lastItem);
-        });
+    public void addSelectionBoxes() {
+        listView.getItems().addListener((ListChangeListener<? super T>) observable -> {
+            observable.next();
+            lastItem = observable.getList().get(observable.getTo() - 1);
 
-        if (lastItem instanceof HBox)
-            ((HBox) lastItem).getChildren().add(0, checkBox);
-        else if (lastItem instanceof Node) {
-            HBox wrapper = new HBox((Node) lastItem);
-            int indexToReplace = listView.getItems().indexOf(lastItem);
-            listView.getItems().set(indexToReplace, (T) wrapper);
-        } else {
-            Label wrapper = new Label(String.valueOf(lastItem));
-            int indexToReplace = listView.getItems().indexOf(lastItem);
-            if (indexToReplace >= 0)
-                listView.getItems().set(indexToReplace, (T) wrapper);
-        }
+            if (lastItem != null) {
+                JFXCheckBox checkBox = new JFXCheckBox();
+                checkBox.selectedProperty().bindBidirectional(((Selectable) lastItem).selectedProperty());
+                checkBox.setOnAction(event -> {
+                    if (((Selectable) lastItem).isSelected())
+                        selectedItems.get().add((Selectable) lastItem);
+                    else
+                        selectedItems.get().remove(lastItem);
+                });
+
+                if (lastItem instanceof HBox)
+                    ((HBox) lastItem).getChildren().add(0, checkBox);
+                else if (lastItem instanceof Node) {
+                    HBox wrapper = new HBox((Node) lastItem);
+                    int indexToReplace = listView.getItems().indexOf(lastItem);
+                    listView.getItems().set(indexToReplace, (T) wrapper);
+                } else {
+                    Label wrapper = new Label(String.valueOf(lastItem));
+                    int indexToReplace = listView.getItems().indexOf(lastItem);
+                    listView.getItems().set(indexToReplace, (T) wrapper);
+                }
+            }
+        });
     }
 
 

@@ -140,7 +140,7 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
 
 
     @Override
-    public void addSelectionBox() {
+    public void addSelectionBoxes() {
         selectionColumn = new JFXTreeTableColumn<>();
         selectionColumn.minWidthProperty().setValue(64);
         selectionColumn.setGraphic(selectionHeader);

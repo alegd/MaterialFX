@@ -196,7 +196,7 @@ public abstract class DataContainer<T> extends BorderPane {
     public abstract void checkContent();
 
 
-    public abstract void addSelectionBox();
+    public abstract void addSelectionBoxes();
 
 
     public synchronized boolean add(T item) {
@@ -267,7 +267,7 @@ public abstract class DataContainer<T> extends BorderPane {
 
     public void setSelectableItems(boolean selectableItems) {
         if (selectableItems)
-            addSelectionBox();
+            addSelectionBoxes();
         else
             removeSelectionBox();
     }

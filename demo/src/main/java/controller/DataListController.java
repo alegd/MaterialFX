@@ -1,6 +1,7 @@
 package controller;
 
 import com.jfoenix.controls.JFXButton;
+import io.alegd.materialtouch.Constant;
 import io.alegd.materialtouch.DataList;
 import io.alegd.materialtouch.Selectable;
 import io.alegd.materialtouch.dataload.DataProvider;
@@ -31,14 +32,18 @@ public class DataListController implements DataProvider {
 
     private Pizza[] pizzas = new Pizza[11];
 
+    private JFXButton deleteButton;
+
 
     @PostConstruct
     public void init() {
         fillPersons();
+        setupDeleteButton();
 
-        dataList.setSelectableItems(true);
         dataList.setDataProvider(this);
+        dataList.setSelectableItems(true);
         dataList.showInPages(true);
+        dataList.getContextualHeader().setRightItems(deleteButton);
         dataList.loadData();
     }
 
@@ -50,6 +55,13 @@ public class DataListController implements DataProvider {
             randomIndex = (int) (Math.random() * 10);
             pizzas[i] = new Pizza(names[randomIndex]);
         }
+    }
+
+
+    private void setupDeleteButton() {
+        deleteButton = new JFXButton(null, Constant.getIcon("delete", 18));
+        deleteButton.setPrefSize(24, 24);
+        deleteButton.setOnMouseClicked(e-> System.out.println("PUFF!!!"));
     }
 
 
@@ -69,20 +81,6 @@ public class DataListController implements DataProvider {
     }
 
 
-    public class Pizza {
-
-        private String name;
-
-        public Pizza(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
-
     public class PizzaViewHolder extends HBox implements Selectable {
 
         private Label name;
@@ -90,6 +88,7 @@ public class DataListController implements DataProvider {
         private JFXButton button;
 
         private BooleanProperty selected;
+
         /**
          * @return
          */
