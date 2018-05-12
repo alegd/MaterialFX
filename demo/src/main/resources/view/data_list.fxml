@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
-<?import io.alegd.materialtouch.datatable.DataTable?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXToolbar?>
+<?import io.alegd.materialtouch.DataList?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
 <StackPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml">
-    <DataTable fx:id="dataTable" styleClass="card">
+    <DataList fx:id="dataList" styleClass="card">
         <header>
             <JFXToolbar>
                 <leftItems>
@@ -18,12 +19,7 @@
                 </rightItems>
             </JFXToolbar>
         </header>
-        <columns>
-            <JFXTreeTableColumn fx:id="nameColumn" text="Name" styleClass="text-column"/>
-            <JFXTreeTableColumn fx:id="ageColumn" text="Age" styleClass="numeric-column"/>
-            <JFXTreeTableColumn fx:id="addressColumn" text="Address" styleClass="text-column"/>
-        </columns>
-    </DataTable>
+    </DataList>
 
     <padding>
         <Insets top="32" right="32" bottom="32" left="32"/>

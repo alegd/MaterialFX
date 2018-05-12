@@ -10,6 +10,7 @@ import com.sun.javafx.tk.Toolkit;
 import io.alegd.materialtouch.DataContainer;
 import io.alegd.materialtouch.Selectable;
 import io.alegd.materialtouch.dataload.Exportable;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -54,6 +55,12 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
 
         withEmptyState(null, null, true);
 
+        Platform.runLater(() -> {
+            setupFirstColumn();
+            setupLastColumn();
+            if (havePages())
+                paginate();
+        });
     }
 
     /**
@@ -131,17 +138,12 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
         });
     }
 
-    /**
-     * Setup column for item selection. Each cell in this column (including the column header)
-     * show a CheckBox, users can click on those CheckBoxes to execute later any action they define
-     * and add to {@link #contextualHeader}.
-     */
+
+    @Override
     public void addSelectionBox() {
         selectionColumn = new JFXTreeTableColumn<>();
         selectionColumn.minWidthProperty().setValue(64);
-
         selectionColumn.setGraphic(selectionHeader);
-
         selectionColumn.setCellValueFactory(new SelectionColumnValueFactory<>(this));
         selectionColumn.getStyleClass().add("selection-column");
 
@@ -175,8 +177,8 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
         return treeTableView.getColumns().remove(column);
     }
 
-
-    public void removeSelectionColumn() {
+    @Override
+    public void removeSelectionBox() {
         if (treeTableView.getColumns().indexOf(selectionColumn) != -1) {
             treeTableView.getColumns().remove(selectionColumn);
             selectionColumn = null;
@@ -203,7 +205,7 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
                 FXCollections.observableArrayList(viewHolders.subList(fromIndex, toIndex)),
                 RecursiveTreeObject::getChildren));
 
-        return this;
+        return treeTableView;
     }
 
     /**
@@ -215,7 +217,6 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
                 if (!showHeaderWithNoData) {
                     setTop(null);
                     setCenter(mEmptyState);
-//                    wrapper.setBottom(null);
                 } else {
                     setCenter(mEmptyState);
                 }
@@ -295,8 +296,6 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
 
 
     public synchronized void loadData() {
-        setupFirstColumn();
-        setupLastColumn();
         dataProvider.setupDataContainer();
         viewHolders.clear();
         dataProvider.loadData();
@@ -324,18 +323,11 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
         this.showHeaderWithNoData = showHeader;
     }
 
-    public <S> ObservableList<TreeTableColumn<T, ?>> getColumns() {
+    public ObservableList<TreeTableColumn<T, ?>> getColumns() {
         return treeTableView.getColumns();
     }
 
     public <S> void setColumns(JFXTreeTableColumn<T, S>... columns) {
         treeTableView.getColumns().addAll(columns);
-    }
-
-    public void setSelectableItems(boolean selectableItems) {
-        if (selectableItems)
-            addSelectionBox();
-        else
-            removeSelectionColumn();
     }
 }

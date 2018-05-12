@@ -1,15 +1,15 @@
 package io.alegd.materialtouch;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
-import io.alegd.materialtouch.dataload.DataProvider;
+import com.jfoenix.controls.JFXListView;
 import io.alegd.materialtouch.dataload.Exportable;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 
 /**
  * @author J. Alejandro Guerra Denis
@@ -18,45 +18,51 @@ public class DataList<T> extends DataContainer<T> {
 
     private ListView<T> listView;
 
-    /**
-     * Class constructor.
-     *
-     * @param listView The ListView
-     */
-    private DataList(ListView<T> listView) {
-        dataContainer = listView;
-        parentPane = (Pane) dataContainer.getParent();
-        this.listView = listView;
+    private T lastItem;
 
-        if (parentPane != null)
-            if (parentPane.getParent() != null)
-                this.card = (Pane) parentPane.getParent().lookup(".card");
+    private JFXButton selectAllButton = new JFXButton();
 
+
+    public DataList() {
+        listView = new JFXListView<>();
         listView.setItems(viewHolders);
-    }
+        setCenter(listView);
 
-    /**
-     * Class constructor.
-     *
-     * @param listView     The ListView
-     * @param dataProvider The class implementing {@link DataProvider} interface
-     */
-    public DataList(ListView<T> listView, DataProvider dataProvider) {
-        this(listView);
-        this.dataProvider = dataProvider;
+        getStylesheets().addAll(
+                this.getClass().getResource("/css/data-table.css").toExternalForm(),
+                this.getClass().getResource("/css/fonts.css").toExternalForm());
+
+        withEmptyState(null, null, true);
 
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((obs, oldVal, newVal) -> dataProvider.onItemSelected(null, newVal));
+        setupSelectAllButton();
+        getContextualHeader().setRightItems(selectAllButton);
+        listView.getItems().addListener((ListChangeListener<? super T>) observable -> {
+            observable.next();
+            lastItem = observable.getList().get(observable.getTo() - 1);
+            addSelectionBox();
+        });
+    }
+
+
+    private void setupSelectAllButton() {
+        selectAllButton.setGraphic(Constant.getIcon("select_all", 21));
+        selectAllButton.setOnMouseClicked(e -> {
+            for (T item : listView.getItems()) {
+                Selectable selectableItem = (Selectable) item;
+                selectableItem.setSelected(true);
+            }
+        });
     }
 
     /**
      * Class constructor.
      *
-     * @param listView   The ListView
      * @param exportable The class implementing {@link Exportable} interface
      */
-    public DataList(ListView<T> listView, Exportable exportable) {
-        this(listView);
+    public DataList(Exportable exportable) {
+        this();
         this.exportable = exportable;
         this.dataProvider = exportable;
 
@@ -81,13 +87,20 @@ public class DataList<T> extends DataContainer<T> {
      */
     @Override
     public void checkContent() {
-        if (card != null) {
-            card.getChildren().clear();
-
+        if (getParent() != null) {
             if (listView.getItems().isEmpty()) {
-                card.getChildren().add(mEmptyState);
-            } else { // This means is in empty state
-                card.getChildren().add(wrapper);
+                if (!showHeaderWithNoData) {
+                    setTop(null);
+                    setCenter(mEmptyState);
+                } else {
+                    setCenter(mEmptyState);
+                }
+            } else {
+                setCenter(listView);
+            }
+        } else {
+            if (mEmptyState.getParent() != null) {
+                setCenter(listView);
             }
         }
     }
@@ -95,35 +108,33 @@ public class DataList<T> extends DataContainer<T> {
 
     @Override
     public void addSelectionBox() {
-        ObservableList items = listView.getItems();
+        JFXCheckBox checkBox = new JFXCheckBox();
+        if (lastItem != null)
+            checkBox.selectedProperty().bindBidirectional(((Selectable) lastItem).selectedProperty());
+        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue)
+                selectedItems.get().add((Selectable) lastItem);
+            else
+                selectedItems.get().remove(lastItem);
+        });
 
-        for (Object item : items) {
-            JFXCheckBox checkBox = new JFXCheckBox();
-            checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue)
-                    selectedItems.get().add((Selectable) item);
-                else
-                    selectedItems.get().remove(item);
-            });
-
-            if (item instanceof HBox)
-                ((HBox) item).getChildren().add(0, checkBox);
-            else if (item instanceof Node) {
-                HBox wrapper = new HBox((Node) item);
-                int indexToReplace = listView.getItems().indexOf(item);
+        if (lastItem instanceof HBox)
+            ((HBox) lastItem).getChildren().add(0, checkBox);
+        else if (lastItem instanceof Node) {
+            HBox wrapper = new HBox((Node) lastItem);
+            int indexToReplace = listView.getItems().indexOf(lastItem);
+            listView.getItems().set(indexToReplace, (T) wrapper);
+        } else {
+            Label wrapper = new Label(String.valueOf(lastItem));
+            int indexToReplace = listView.getItems().indexOf(lastItem);
+            if (indexToReplace >= 0)
                 listView.getItems().set(indexToReplace, (T) wrapper);
-            } else {
-                Label wrapper = new Label(String.valueOf(item));
-                int indexToReplace = listView.getItems().indexOf(item);
-                listView.getItems().set(indexToReplace, (T) wrapper);
-            }
         }
+    }
 
-//        contextualToolbar = new JFXToolbar();
-//        JFXDepthManager.setDepth(contextualToolbar, 0);
-//        contextualToolbar.getStyleClass().add("table-header");
-//        contextualToolbar.getStyleClass().add("alternate-table-header");
-//        mCToolbarTitle = new Label("contextual");
-//        contextualToolbar.setLeftItems(mCToolbarTitle);
+
+    @Override
+    public void removeSelectionBox() {
+
     }
 }

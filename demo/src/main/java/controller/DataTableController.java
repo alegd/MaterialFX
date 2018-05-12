@@ -30,17 +30,33 @@ public class DataTableController implements DataProvider {
     @FXML
     private JFXTreeTableColumn<PersonViewHolder, String> addressColumn;
 
-    private Person[] persons = new Person[]{
-            new Person("Ale", 25, ""),
-            new Person("Adriana", 54, "")
+    private String[] names = new String[]{
+            "Alejandro", "Manuel", "Reynier", "Claudia", "Rafael", "Grettel", "Adriana", "Jose Pablo", "Carlos", "Anabel"
     };
+
+    private Person[] persons = new Person[11];
+
 
     @PostConstruct
     public void init() {
+        fillPersons();
+
         dataTable.setSelectableItems(true);
         dataTable.setDataProvider(this);
+        dataTable.showInPages(true);
         dataTable.loadData();
     }
+
+
+    private void fillPersons() {
+        int randomIndex;
+
+        for (int i = 0; i < persons.length; i++) {
+            randomIndex = (int) (Math.random() * 10);
+            persons[i] = new Person(names[randomIndex], (randomIndex + 1) * (i + 1), "");
+        }
+    }
+
 
     public void setupDataContainer() {
         dataTable.setupCellValueFactory(nameColumn, PersonViewHolder::nameProperty);

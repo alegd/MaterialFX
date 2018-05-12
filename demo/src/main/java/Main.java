@@ -1,5 +1,5 @@
 import com.jfoenix.controls.JFXDecorator;
-import controller.DataTableController;
+import controller.DataListController;
 import io.datafx.controller.ViewConfiguration;
 import io.datafx.controller.flow.Flow;
 import io.datafx.controller.flow.FlowHandler;
@@ -17,7 +17,7 @@ public class Main extends Application{
         ViewConfiguration viewConfiguration = new ViewConfiguration();
         // Spanish by default
         // Create and register in context the main flow
-        Flow mainFlow = new Flow(DataTableController.class);
+        Flow mainFlow = new Flow(DataListController.class);
         // Create and register in context the main flow handler
         FlowHandler mainFlowHandler = new FlowHandler(mainFlow, context, viewConfiguration);
 
@@ -29,7 +29,7 @@ public class Main extends Application{
 
         Scene scene = new Scene(decorator, 600, 450);
         final ObservableList<String> stylesheets = scene.getStylesheets();
-        stylesheets.add(Main.class.getResource("/css/hammer.css").toExternalForm());
+        stylesheets.add(Main.class.getResource("/css/demo.css").toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.show();

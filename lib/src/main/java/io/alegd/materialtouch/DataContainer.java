@@ -14,11 +14,9 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -62,13 +60,9 @@ public abstract class DataContainer<T> extends BorderPane {
 
     protected DataProvider dataProvider;
 
-    protected Control dataContainer;
-
-    protected Pane card;
-
     protected VBox mEmptyState;
 
-    protected boolean showHeaderWithNoData;
+    boolean showHeaderWithNoData;
 
     protected ObservableList<T> viewHolders;
 
@@ -77,10 +71,6 @@ public abstract class DataContainer<T> extends BorderPane {
     protected boolean showPages;
 
     protected JFXPagination pagination;
-
-    protected Pane parentPane;
-
-    protected BorderPane wrapper;
 
 
     protected DataContainer() {
@@ -123,7 +113,7 @@ public abstract class DataContainer<T> extends BorderPane {
         if (viewHolders.size() > 10 && showPages) {
             pagination = new JFXPagination(getData().size(), 0);
             pagination.setPageFactory(this::createPage);
-            wrapper.setCenter(pagination);
+            setCenter(pagination);
         }
     }
 
@@ -155,11 +145,7 @@ public abstract class DataContainer<T> extends BorderPane {
             getHeader().setRightItems(actions);
         }
 
-        if (parentPane instanceof BorderPane)
-            ((BorderPane) parentPane).setTop(getHeader());
-        else {
-            wrapper.setTop(getHeader());
-        }
+        setTop(getHeader());
     }
 
     /**
@@ -256,11 +242,6 @@ public abstract class DataContainer<T> extends BorderPane {
     }
 
 
-    public BorderPane getWrapper() {
-        return wrapper;
-    }
-
-
     public void setShowHeaderWithNoData(boolean showHeader) {
         this.showHeaderWithNoData = showHeader;
     }
@@ -279,5 +260,15 @@ public abstract class DataContainer<T> extends BorderPane {
 
     public void showInPages(boolean showPages) {
         this.showPages = showPages;
+    }
+
+    public abstract void removeSelectionBox();
+
+
+    public void setSelectableItems(boolean selectableItems) {
+        if (selectableItems)
+            addSelectionBox();
+        else
+            removeSelectionBox();
     }
 }
