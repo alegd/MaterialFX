@@ -71,7 +71,8 @@ public class DataLoader {
         loadDataService.setOnRunning(service -> asyncDataProvider.onRunning());
         // If everything it's OK :)
         loadDataService.setOnSucceeded(service -> {
-            dataContainer.wrapDataContainer();
+            if (dataContainer.havePages())
+                dataContainer.paginate();
             asyncDataProvider.onSucceeded();
             System.out.println("SUCCESS");
         });
@@ -112,7 +113,8 @@ public class DataLoader {
             }
 
             executor.shutdownNow();
-            dataContainer.wrapDataContainer();
+            if (dataContainer.havePages())
+                dataContainer.paginate();
             asyncDataProvider.onSucceeded();
             System.out.println("shutdown finished");
         }

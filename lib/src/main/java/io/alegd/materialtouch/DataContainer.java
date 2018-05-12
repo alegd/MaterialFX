@@ -6,7 +6,9 @@ import io.alegd.materialtouch.dataload.DataProvider;
 import io.alegd.materialtouch.dataload.Exportable;
 import io.alegd.materialtouch.pagination.JFXPagination;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -17,7 +19,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -28,13 +29,34 @@ import java.util.List;
 /**
  * @author J. Alejandro Guerra Denis
  */
-public abstract class DataContainer<T> {
+public abstract class DataContainer<T> extends BorderPane {
 
-    JFXToolbar mainToolbar;
+    private ObjectProperty<JFXToolbar> header;
 
-    protected JFXToolbar contextualToolbar;
+    public final ObjectProperty<JFXToolbar> headerProperty() {
+        if (header == null) {
+            header = new SimpleObjectProperty<>();
+        }
 
-    protected Label mCToolbarTitle;
+        return header;
+    }
+
+    private ObjectProperty<JFXToolbar> contextualHeader;
+
+    public final ObjectProperty<JFXToolbar> contextualHeaderProperty() {
+        if (contextualHeader == null) {
+            JFXToolbar toolbar = new JFXToolbar();
+            toolbar.getStyleClass().add("table-header");
+            toolbar.getStyleClass().add("contextual-table-header");
+            contextualHeader = new SimpleObjectProperty<>(toolbar);
+            contextualHeaderTitle = new Label();
+            contextualHeader.get().setLeftItems(contextualHeaderTitle);
+        }
+
+        return contextualHeader;
+    }
+
+    private Label contextualHeaderTitle;
 
     protected Exportable exportable;
 
@@ -52,7 +74,7 @@ public abstract class DataContainer<T> {
 
     protected ListProperty<Selectable> selectedItems;
 
-    protected boolean paginate;
+    protected boolean showPages;
 
     protected JFXPagination pagination;
 
@@ -70,14 +92,14 @@ public abstract class DataContainer<T> {
 
         selectedItems.addListener((observable, oldValue, newValue) -> {
             if (newValue.size() > 0) {
-                if (newValue.size() > 1)
-                    mCToolbarTitle.setText(newValue.size() + " elementos seleccionados");
-                else
-                    mCToolbarTitle.setText("1 elemento seleccionado");
+                setTop(contextualHeaderProperty().get());
 
-                ((BorderPane) dataContainer.getParent()).setTop(contextualToolbar);
+                if (newValue.size() > 1)
+                    contextualHeaderTitle.setText(newValue.size() + " elementos seleccionados");
+                else
+                    contextualHeaderTitle.setText("1 elemento seleccionado");
             } else {
-                ((BorderPane) dataContainer.getParent()).setTop(mainToolbar);
+                setTop(header.get());
             }
         });
     }
@@ -97,31 +119,12 @@ public abstract class DataContainer<T> {
     /**
      *
      */
-    public synchronized void wrapDataContainer() {
-        if (parentPane == null) {
-            if (dataContainer.getParent() != null)
-                parentPane = (Pane) dataContainer.getParent();
-        }
-        // if parentPane is a BorderPane we got ourselves already a wrapper
-        if (!(parentPane instanceof BorderPane)) {
-            if (wrapper == null) {
-                wrapper = new BorderPane(dataContainer);
-                if (parentPane != null)
-                    parentPane.getChildren().add(wrapper);
-            }
-        } else {
-            wrapper = (BorderPane) parentPane;
-        }
-
-        if (viewHolders.size() > 10 && paginate) {
+    public synchronized void paginate() {
+        if (viewHolders.size() > 10 && showPages) {
             pagination = new JFXPagination(getData().size(), 0);
             pagination.setPageFactory(this::createPage);
             wrapper.setCenter(pagination);
         }
-
-        if (parentPane instanceof VBox)
-            VBox.setVgrow(wrapper, Priority.ALWAYS);
-
     }
 
     /**
@@ -132,10 +135,6 @@ public abstract class DataContainer<T> {
      * @param actions   The actions in the header for the data table
      */
     public synchronized void withHeader(String mainTitle, Node... actions) {
-        mainToolbar = new JFXToolbar();
-        mainToolbar.getStyleClass().add("table-header");
-        mainToolbar.setLeftItems(new Label(mainTitle));
-
         if (exportable != null) {
             JFXButton printButton = new JFXButton(null,
                     Constant.getIcon("print", 20, Color.GRAY));
@@ -151,16 +150,15 @@ public abstract class DataContainer<T> {
             moreActions.add(printButton);
             moreActions.add(exportButton);
             moreActions.addAll(Arrays.asList(actions));
-            mainToolbar.setRightItems((Node[]) moreActions.toArray(new Node[actions.length + 1]));
+            getHeader().setRightItems((Node[]) moreActions.toArray(new Node[actions.length + 1]));
         } else {
-            mainToolbar.setRightItems(actions);
+            getHeader().setRightItems(actions);
         }
 
         if (parentPane instanceof BorderPane)
-            ((BorderPane) parentPane).setTop(mainToolbar);
+            ((BorderPane) parentPane).setTop(getHeader());
         else {
-            wrapDataContainer();
-            wrapper.setTop(mainToolbar);
+            wrapper.setTop(getHeader());
         }
     }
 
@@ -235,13 +233,26 @@ public abstract class DataContainer<T> {
     }
 
 
-    public JFXToolbar getMainToolbar() {
-        return mainToolbar;
+    public final JFXToolbar getHeader() {
+        return headerProperty().get();
     }
 
 
-    public JFXToolbar getContextualToolbar() {
-        return contextualToolbar;
+    public void setHeader(JFXToolbar toolbar) {
+        toolbar.getStyleClass().add("table-header");
+        this.headerProperty().set(toolbar);
+        setTop(header.get());
+    }
+
+
+    public JFXToolbar getContextualHeader() {
+        return contextualHeaderProperty().get();
+    }
+
+
+    public void setContextualHeader(JFXToolbar toolbar) {
+        this.headerProperty().set(toolbar);
+        setTop(contextualHeader.get());
     }
 
 
@@ -252,5 +263,21 @@ public abstract class DataContainer<T> {
 
     public void setShowHeaderWithNoData(boolean showHeader) {
         this.showHeaderWithNoData = showHeader;
+    }
+
+    public DataProvider getDataProvider() {
+        return dataProvider;
+    }
+
+    public void setDataProvider(DataProvider dataProvider) {
+        this.dataProvider = dataProvider;
+    }
+
+    public boolean havePages() {
+        return showPages;
+    }
+
+    public void showInPages(boolean showPages) {
+        this.showPages = showPages;
     }
 }

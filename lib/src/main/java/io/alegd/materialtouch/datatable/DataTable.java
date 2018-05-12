@@ -1,24 +1,21 @@
 package io.alegd.materialtouch.datatable;
 
 import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXToolbar;
 import com.jfoenix.controls.JFXTreeTableColumn;
+import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import com.jfoenix.effects.JFXDepthManager;
 import com.sun.javafx.tk.FontLoader;
 import com.sun.javafx.tk.Toolkit;
 import io.alegd.materialtouch.DataContainer;
 import io.alegd.materialtouch.Selectable;
-import io.alegd.materialtouch.dataload.AsyncDataProvider;
-import io.alegd.materialtouch.dataload.DataProvider;
 import io.alegd.materialtouch.dataload.Exportable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 
 import java.util.function.Function;
@@ -29,95 +26,87 @@ import java.util.function.Function;
  */
 public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T> {
 
+    private JFXTreeTableView<T> treeTableView;
+
     private JFXTreeTableColumn<T, Boolean> selectionColumn;
 
     private JFXTreeTableColumn<T, String> actionColumn;
 
     private JFXCheckBox selectionHeader = new JFXCheckBox();
 
-    private TreeTableView<T> treeTableView;
+    private boolean showHeaderWithNoData;
 
     /**
      * Class constructor.
-     *
-     * @param treeTableView The TreeTableView
      */
-    private DataTable(TreeTableView<T> treeTableView) {
-        dataContainer = treeTableView;
-        parentPane = (Pane) dataContainer.getParent();
+    public DataTable() {
+        treeTableView = new JFXTreeTableView<>();
 
-        this.treeTableView = treeTableView;
+        getStylesheets().addAll(
+                this.getClass().getResource("/css/data-table.css").toExternalForm(),
+                this.getClass().getResource("/css/fonts.css").toExternalForm());
 
-        this.treeTableView.setRoot(new RecursiveTreeItem<>(viewHolders, RecursiveTreeObject::getChildren));
-        this.treeTableView.setShowRoot(false);
+        setCenter(treeTableView);
 
-        if (parentPane != null)
-            if (parentPane.getParent() != null)
-                this.card = (Pane) parentPane.getParent().lookup(".card");
-
+        treeTableView.setRoot(new RecursiveTreeItem<>(viewHolders, RecursiveTreeObject::getChildren));
+        treeTableView.setShowRoot(false);
         setRowFactory();
+
         withEmptyState(null, null, true);
+
     }
 
     /**
      * Class constructor.
      *
-     * @param treeTableView The TreeTableView
-     * @param dataProvider  The class implementing {@link DataProvider} interface
+     * @param paginate Whether to showPages or not
      */
-    public DataTable(TreeTableView<T> treeTableView, DataProvider dataProvider) {
-        this(treeTableView);
-        this.dataProvider = dataProvider;
-
-        if (!(dataProvider instanceof AsyncDataProvider))
-            wrapDataContainer();
+    public DataTable(boolean paginate) {
+        this();
+        this.showPages = paginate;
     }
 
     /**
      * Class constructor.
      *
-     * @param treeTableView The TreeTableView
-     * @param dataProvider  The class implementing {@link DataProvider} interface
-     * @param paginate      Whether to paginate or not
+     * @param exportable The class implementing {@link Exportable} interface
      */
-    public DataTable(TreeTableView<T> treeTableView, DataProvider dataProvider, boolean paginate) {
-        this(treeTableView, dataProvider);
-        this.paginate = paginate;
-    }
-
-    /**
-     * Class constructor.
-     *
-     * @param treeTableView The TreeTableView
-     * @param exportable    The class implementing {@link Exportable} interface
-     */
-    public DataTable(TreeTableView<T> treeTableView, Exportable exportable) {
-        this(treeTableView);
+    public DataTable(Exportable exportable) {
+        this();
         this.exportable = exportable;
         this.dataProvider = exportable;
-
-        if (!(dataProvider instanceof AsyncDataProvider))
-            wrapDataContainer();
     }
 
     /**
      * Class constructor.
      *
-     * @param treeTableView The TreeTableView
-     * @param exportable    The class implementing {@link Exportable} interface
+     * @param exportable The class implementing {@link Exportable} interface
      */
-    public DataTable(TreeTableView<T> treeTableView, Exportable exportable, boolean paginate) {
-        this(treeTableView, exportable);
-        this.paginate = paginate;
+    public DataTable(Exportable exportable, boolean paginate) {
+        this(exportable);
+        this.showPages = paginate;
     }
 
     /**
-     * Set click action for rows of a TreeTableView. On mouse click the onItemSelected
+     * Add an empty state to the data table. Empty states occur when an item’s content can’t
+     * be shown for any reason.
+     *
+     * @param title    The title for the empty state card
+     * @param subtitle The subtitle for the empty state card, usually a suggestion to get
+     *                 rid of the emptiness.
+     */
+    public synchronized void withEmptyState(String title, String subtitle, boolean keepHeader) {
+        showHeaderWithNoData = keepHeader;
+        withEmptyState(title, subtitle);
+    }
+
+    /**
+     * Set click action for rows of a  On mouse click the onItemSelected
      * method is called, since that method is define through an interface, each class that
      * use this method is responsible for its own implementation.
      */
     private void setRowFactory() {
-        this.treeTableView.setRowFactory(tv -> {
+        treeTableView.setRowFactory(tv -> {
             TreeTableRow<T> row = new TreeTableRow<>();
             row.setOnMouseClicked(event -> this.dataProvider.onItemSelected(event, row));
             return row;
@@ -145,9 +134,8 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
     /**
      * Setup column for item selection. Each cell in this column (including the column header)
      * show a CheckBox, users can click on those CheckBoxes to execute later any action they define
-     * and add to {@link #contextualToolbar}.
+     * and add to {@link #contextualHeader}.
      */
-    @Override
     public void addSelectionBox() {
         selectionColumn = new JFXTreeTableColumn<>();
         selectionColumn.minWidthProperty().setValue(64);
@@ -164,13 +152,6 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
             firstColumn.getStyleClass().add("after-checkbox-column");
             firstColumn.getStyleClass().remove("first-column");
             treeTableView.getColumns().add(0, selectionColumn);
-
-            contextualToolbar = new JFXToolbar();
-            JFXDepthManager.setDepth(contextualToolbar, 0);
-            contextualToolbar.getStyleClass().add("table-header");
-            contextualToolbar.getStyleClass().add("alternate-table-header");
-            mCToolbarTitle = new Label("contextual");
-            contextualToolbar.setLeftItems(mCToolbarTitle);
         }
     }
 
@@ -222,32 +203,28 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
                 FXCollections.observableArrayList(viewHolders.subList(fromIndex, toIndex)),
                 RecursiveTreeObject::getChildren));
 
-        return treeTableView;
+        return this;
     }
 
     /**
      *
      */
-    @Override
     public void checkContent() {
-        if (wrapper == null)
-            wrapDataContainer();
-
-        if (treeTableView.getParent() != null) {
+        if (getParent() != null) {
             if (treeTableView.getRoot().getChildren().isEmpty()) {
                 if (!showHeaderWithNoData) {
-                    wrapper.setTop(null);
-                    wrapper.setCenter(mEmptyState);
-                    wrapper.setBottom(null);
+                    setTop(null);
+                    setCenter(mEmptyState);
+//                    wrapper.setBottom(null);
                 } else {
-                    wrapper.setCenter(mEmptyState);
+                    setCenter(mEmptyState);
                 }
             } else {
-                wrapper.setCenter(treeTableView);
+                setCenter(treeTableView);
             }
         } else {
             if (mEmptyState.getParent() != null) {
-                wrapper.setCenter(treeTableView);
+                setCenter(treeTableView);
             }
         }
     }
@@ -317,10 +294,48 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
     }
 
 
-    @Override
     public synchronized void loadData() {
-        super.loadData();
         setupFirstColumn();
         setupLastColumn();
+        dataProvider.setupDataContainer();
+        viewHolders.clear();
+        dataProvider.loadData();
+
+        if (mEmptyState != null)
+            checkContent();
+    }
+
+
+    public boolean add(T item) {
+        return viewHolders.add(item);
+    }
+
+
+    public ObservableList<T> getData() {
+        return viewHolders;
+    }
+
+
+    public ObservableList<Selectable> getSelectedItems() {
+        return selectedItems.get();
+    }
+
+    public void setShowHeaderWithNoData(boolean showHeader) {
+        this.showHeaderWithNoData = showHeader;
+    }
+
+    public <S> ObservableList<TreeTableColumn<T, ?>> getColumns() {
+        return treeTableView.getColumns();
+    }
+
+    public <S> void setColumns(JFXTreeTableColumn<T, S>... columns) {
+        treeTableView.getColumns().addAll(columns);
+    }
+
+    public void setSelectableItems(boolean selectableItems) {
+        if (selectableItems)
+            addSelectionBox();
+        else
+            removeSelectionColumn();
     }
 }

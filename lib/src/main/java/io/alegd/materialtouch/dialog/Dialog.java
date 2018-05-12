@@ -18,15 +18,13 @@ import javafx.scene.layout.StackPane;
  *
  * @author J. Alejandro Guerra Denis
  */
-public class DialogController {
+public class Dialog extends JFXDialog {
 
-    private IDialogBehavior behavior;
+    private DialogActionListener actionListener;
 
     private JFXButton cancelButton;
 
     private JFXButton confirmButton;
-
-    private JFXDialog mDialog;
 
     private JFXDialogLayout mDialogLayout;
 
@@ -34,15 +32,10 @@ public class DialogController {
      * Class constructor. Here initial configuration for the dialog is set, for
      * additional configurations or to overwrite default one, methods in this same
      * class ca be used.
-     *
-     * @param behavior The class implementing {@link IDialogBehavior}
      */
-    private DialogController(IDialogBehavior behavior) {
-        this.behavior = behavior;
-
-        mDialog = new JFXDialog();
+    private Dialog() {
         mDialogLayout = new JFXDialogLayout();
-        mDialog.setOverlayClose(false);
+        setOverlayClose(false);
 
         cancelButton = new JFXButton("CANCELAR");
         cancelButton.getStyleClass().add("dialog-button");
@@ -53,9 +46,9 @@ public class DialogController {
         confirmButton.setOnMouseClicked(event -> handleConfirm());
 
         mDialogLayout.setActions(cancelButton, confirmButton);
-        mDialog.setContent(mDialogLayout);
+        setContent(mDialogLayout);
 
-        mDialog.setTransitionType(JFXDialog.DialogTransition.CENTER);
+        setTransitionType(JFXDialog.DialogTransition.CENTER);
     }
 
     /**
@@ -64,19 +57,10 @@ public class DialogController {
      * class ca be used.
      *
      * @param container The StackPane where the dialog is contained.
-     * @param behavior  The class implementing {@link IDialogBehavior}
      */
-    public DialogController(StackPane container, IDialogBehavior behavior) {
-        this(behavior);
-
-        mDialog.setDialogContainer(container);
-    }
-
-    /**
-     * Show dialog.
-     */
-    public void show() {
-        mDialog.show();
+    public Dialog(StackPane container) {
+        this();
+        setDialogContainer(container);
     }
 
     /**
@@ -125,32 +109,31 @@ public class DialogController {
 
     /**
      * When user clicks confirm, the action define in the class that is implementing
-     * {@link IDialogBehavior} is executed, if the action was successfully executed,
+     * {@link DialogActionListener} is executed, if the action was successfully executed,
      * we close the dialog, if not, the dialog stays open and developers should implement
      * how errors must be handled.
      */
     private void handleConfirm() {
-        if (behavior.onConfirm())
-            mDialog.close();
+        if (actionListener.onConfirm())
+            close();
     }
 
     /**
      * When user clicks cancel we just close the open dialog.
      */
     private void handleCancel() {
-        behavior.onCancel();
-        mDialog.close();
+        actionListener.onCancel();
+        close();
     }
-
 
     /**
      * @param title The title of the dialog
      */
     public void setDialogTitle(Node title) {
         // If dialog doesn't close on overlay click we add a close button to it
-        if (!mDialog.isOverlayClose() && mDialogLayout.getActions().size() <= 0) {
+        if (!isOverlayClose() && mDialogLayout.getActions().size() <= 0) {
             JFXButton closeButton = new JFXButton(null, Constant.getIcon("close", 14));
-            closeButton.setOnMouseClicked(e -> mDialog.close());
+            closeButton.setOnMouseClicked(e -> close());
             setDialogTitle(title, closeButton);
         } else {
             mDialogLayout.setHeading(title);
@@ -172,19 +155,23 @@ public class DialogController {
         mDialogLayout.setHeading(header);
     }
 
+
     public JFXDialogLayout getDialogLayout() {
         return mDialogLayout;
     }
+
 
     public void setDialogContent(Node... items) {
         mDialogLayout.setBody(items);
     }
 
+
     public void setConfirmActionText(String text) {
         confirmButton.setText(text.toUpperCase());
     }
 
-    public void setDialogContainer(StackPane root) {
-        mDialog.setDialogContainer(root);
+
+    public void setActionListener(DialogActionListener actionListener) {
+        this.actionListener = actionListener;
     }
 }

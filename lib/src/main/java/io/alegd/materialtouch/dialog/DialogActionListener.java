@@ -3,7 +3,7 @@ package io.alegd.materialtouch.dialog;
 /**
  * @author J. Alejandro Guerra Denis
  */
-public interface IDialogBehavior {
+public interface DialogActionListener {
 
     /**
      * Confirm the action of a dialog. The dialog should be closed after the action

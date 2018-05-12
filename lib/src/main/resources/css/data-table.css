@@ -1,0 +1,219 @@
+
+.jfx-tool-bar {
+    -fx-font-size: 20.0;
+    -fx-font-weight: BOLD;
+    -fx-pref-width: 100.0%;
+    -fx-pref-height: 64px;
+}
+
+.jfx-tool-bar HBox {
+    -fx-alignment: center;
+    -fx-padding: 0.0 10.0;
+}
+
+.table-header {
+    -fx-background-color: transparent;
+    -fx-min-height: 64px;
+    -fx-pref-height: 64px;
+    -fx-max-height: 64px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0), 0, 0, 0, 0);
+}
+
+.contextual-table-header {
+    -fx-border-radius: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0), 0, 0, 0, 0);
+}
+
+.table-header Label {
+    -fx-font-size: 20;
+    -fx-font-weight: normal;
+    -fx-text-fill: rgba(0, 0, 0, .87);
+}
+
+.contextual-table-header Label {
+    -fx-text-fill: #303F9F;
+}
+
+.table-header {
+    -fx-padding: 0 8 0 2;
+}
+
+.table-header .tool-bar-left-box Label {
+    -fx-padding: 0 0 0 12;
+}
+
+.table-header .tool-bar-right-box {
+    -fx-spacing: 8;
+}
+
+.table-header .tool-bar-right-box Label {
+    -fx-padding: 0 6px;
+}
+
+.table-footer {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(0, 0, 0, .87);
+    -fx-min-height: 56px;
+    -fx-padding: 16px 22px 16px 24px;
+}
+
+.tree-table-view {
+    /*-fx-tree-table-color: rgba(82, 100, 174, 0.4);*/
+    /*-fx-tree-table-rippler-color: rgba(82, 100, 174, 0.6);*/
+    -fx-border-width: 0;
+    -fx-padding: 0;
+    -fx-font-size: 13px;
+}
+
+.tree-table-view:focused {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+}
+
+.tree-table-view:focused .tree-table-row-cell:selected {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: rgba(0, 0, 0, .87);
+}
+
+.tree-table-view:focused .tree-table-row-cell:selected .tree-table-cell {
+    -fx-table-cell-border-color: transparent;
+    -fx-text-fill: rgba(0, 0, 0, .87);
+    -fx-background-color: #F5F5F5;
+}
+
+.tree-table-view:focused .tree-table-row-cell:hover .tree-table-cell {
+    -fx-background-color: #EEEEEE;
+}
+
+.tree-table-view .jfx-rippler {
+    -jfx-rippler-fill: -fx-tree-table-rippler-color;
+}
+
+.tree-table-view .column-header,
+.tree-table-view .column-header-background,
+.tree-table-view .column-header-background .filler {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-min-height: 56px;
+    -fx-pref-height: 56px;
+}
+
+.tree-table-view .column-header .label {
+    -fx-text-fill: rgba(0, 0, 0, .54);
+    -fx-padding: 16 0;
+    -fx-font-size: 12px;
+}
+
+.tree-table-view .column-header .arrow, .tree-table-view .column-header .sort-order-dot {
+    -fx-background-color: #949494;
+}
+
+.tree-table-view .column-header-background {
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #e0e0e0;
+}
+
+.tree-table-view .tree-table-cell {
+    -fx-border-width: 0;
+    -fx-pref-height: 48px;
+    -fx-alignment: top-center;
+}
+
+.tree-table-view .column-header.numeric-column StackPane {
+    -fx-alignment: center-right;
+    -fx-padding: 16 0 16 56;
+}
+
+.tree-table-view .column-header.numeric-column StackPane GridPane HBox,
+.tree-table-view .column-header.numeric-column StackPane Label {
+    -fx-alignment: center;
+}
+
+.tree-table-view .tree-table-cell.selection-column {
+    -fx-padding: 15 0 ;
+}
+
+.tree-table-view .tree-table-cell.numeric-column {
+    -fx-alignment: top-right;
+    -fx-padding: 16 0 16 56;
+}
+
+.tree-table-view .column-header.text-column StackPane {
+    -fx-alignment: center-left;
+    -fx-padding: 16 0 16 56;
+}
+
+.tree-table-view .tree-table-cell.text-column {
+    -fx-alignment: top-left;
+    -fx-padding: 16 0 16 56;
+}
+
+.tree-table-view .tree-table-cell.first-column,
+.tree-table-view .column-header.first-column StackPane {
+    -fx-padding: 16 0 16 24;
+}
+
+.tree-table-view .tree-table-cell.last-column,
+.tree-table-view .column-header.last-column StackPane {
+    -fx-padding: 16 20 16 56;
+}
+
+.tree-table-view .tree-table-cell.after-checkbox-column,
+.tree-table-view .column-header.after-checkbox-column StackPane {
+    -fx-padding: 16 0;
+}
+
+.tree-table-view .tree-table-cell.action-column {
+    -fx-padding: 0;
+}
+
+.tree-table-view .tree-table-cell.action-column .jfx-rippler {
+    -jfx-rippler-fill: #303F9F;
+    -jfx-mask-type: RipplerMaskCIRCLE;
+}
+
+.tree-table-view .column-overlay {
+    -fx-background-color: -fx-tree-table-color;
+}
+
+.tree-table-view .column-resize-line, .tree-table-view .column-drag-header {
+    -fx-background-color: -fx-tree-table-rippler-color;
+}
+
+.tree-table-row-cell > .tree-disclosure-node > .arrow {
+    -fx-background-color: -fx-text-fill;
+    -fx-padding: 0.333333em 0.229em 0.333333em 0.229em; /* 4 */
+    -fx-shape: "M 0 -3.5 L 4 0 L 0 3.5 z";
+}
+
+.tree-table-row-cell {
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.tree-table-row-group {
+    -fx-background-color: rgb(230, 230, 230);
+}
+
+.tree-table-view .menu-item:focused {
+    -fx-background-color: -fx-tree-table-color;
+
+}
+
+.tree-table-view .menu-item .label {
+    -fx-padding: 5 0 5 0;
+}
+
+.table-header-button {
+    -fx-font-size: 13px;
+    -fx-text-fill: #303F9F;
+    -fx-font-weight: BOLD;
+    -fx-padding: 0.7em 0.8em;
+}
+
+.table-header-button .jfx-rippler {
+    -jfx-rippler-fill: #303F9F;
+}

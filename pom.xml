@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.alegd</groupId>
-    <artifactId>material-touch</artifactId>
+    <artifactId>material-touch-lib</artifactId>
     <version>0.1</version>
+    <packaging>pom</packaging>
 
     <modules>
         <module>lib</module>
-        <module>demo</module>
     </modules>
 
     <build>
@@ -120,12 +120,5 @@
         <url>http://127.0.0.1/dummy</url>
     </scm>
 
-    <dependencies>
-        <!-- https://mvnrepository.com/artifact/com.jfoenix/jfoenix -->
-        <dependency>
-            <groupId>com.jfoenix</groupId>
-            <artifactId>jfoenix</artifactId>
-            <version>8.0.3</version>
-        </dependency>
-    </dependencies>
+
 </project>
