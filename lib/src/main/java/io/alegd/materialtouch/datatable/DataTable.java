@@ -177,6 +177,7 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
         return treeTableView.getColumns().remove(column);
     }
 
+
     @Override
     public void removeSelectionBox() {
         if (treeTableView.getColumns().indexOf(selectionColumn) != -1) {
@@ -212,21 +213,15 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
      *
      */
     public void checkContent() {
-        if (getParent() != null) {
-            if (treeTableView.getRoot().getChildren().isEmpty()) {
-                if (!showHeaderWithNoData) {
-                    setTop(null);
-                    setCenter(mEmptyState);
-                } else {
-                    setCenter(mEmptyState);
-                }
+        if (treeTableView.getRoot().getChildren().isEmpty()) {
+            if (!showHeaderWithNoData) {
+                headerProperty().set(null);
+                setCenter(mEmptyState);
             } else {
-                setCenter(treeTableView);
+                setCenter(mEmptyState);
             }
         } else {
-            if (mEmptyState.getParent() != null) {
-                setCenter(treeTableView);
-            }
+            setCenter(treeTableView);
         }
     }
 
@@ -329,5 +324,10 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
 
     public <S> void setColumns(JFXTreeTableColumn<T, S>... columns) {
         treeTableView.getColumns().addAll(columns);
+    }
+
+
+    public JFXTreeTableView<T> getTreeTableView() {
+        return treeTableView;
     }
 }

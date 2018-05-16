@@ -1,5 +1,7 @@
 import com.jfoenix.controls.JFXDecorator;
 import controller.DataListController;
+import controller.DataTableController;
+import io.alegd.materialtouch.datatable.DataTable;
 import io.datafx.controller.ViewConfiguration;
 import io.datafx.controller.flow.Flow;
 import io.datafx.controller.flow.FlowHandler;
@@ -17,7 +19,7 @@ public class Main extends Application{
         ViewConfiguration viewConfiguration = new ViewConfiguration();
         // Spanish by default
         // Create and register in context the main flow
-        Flow mainFlow = new Flow(DataListController.class);
+        Flow mainFlow = new Flow(DataTableController.class);
         // Create and register in context the main flow handler
         FlowHandler mainFlowHandler = new FlowHandler(mainFlow, context, viewConfiguration);
 
