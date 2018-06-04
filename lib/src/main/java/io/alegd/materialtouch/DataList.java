@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TreeItem;
 import javafx.scene.layout.HBox;
 
 /**
@@ -19,9 +20,8 @@ public class DataList<T> extends DataContainer<T> {
 
     private ListView<T> listView;
 
-    private T lastItem;
-
     private JFXButton selectAllButton = new JFXButton();
+
     private ObservableList<Node> toolBarActions;
 
 
@@ -50,11 +50,24 @@ public class DataList<T> extends DataContainer<T> {
 
 
     private void setupSelectAllButton() {
-        selectAllButton.setGraphic(Constant.getIcon("select_all", 21));
+        selectAllButton.setGraphic(Constant.getIcon("select_all", 20));
         selectAllButton.setOnMouseClicked(e -> {
-            for (T item : listView.getItems()) {
-                Selectable selectableItem = (Selectable) item;
-                selectableItem.setSelected(true);
+            boolean allSelectedFlag = (selectedItems.size() == listView.getItems().size());
+            selectedItems.clear();
+
+            if (!allSelectedFlag) {
+                for (T item : listView.getItems()) {
+                    Selectable selectableItem = (Selectable) item;
+                    selectableItem.setSelected(true);
+                    selectedItems.get().add(selectableItem);
+                }
+            } else {
+                for (T item : listView.getItems()) {
+                    Selectable selectableItem = (Selectable) item;
+                    selectableItem.setSelected(false);
+                }
+
+                selectedItems.clear();
             }
         });
     }
@@ -112,28 +125,21 @@ public class DataList<T> extends DataContainer<T> {
     @Override
     public void addSelectionBoxes() {
         listView.getItems().addListener((ListChangeListener<? super T>) observable -> {
-            observable.next();
-            lastItem = observable.getList().get(observable.getTo() - 1);
+            observable.next(); // Mandatory call before any action with observable
+            T addedItem = observable.getAddedSubList().get(0);
 
-            if (lastItem != null) {
-                JFXCheckBox checkBox = new JFXCheckBox();
-                checkBox.selectedProperty().bindBidirectional(((Selectable) lastItem).selectedProperty());
-                checkBox.setOnAction(event -> {
-                    if (((Selectable) lastItem).isSelected())
-                        selectedItems.get().add((Selectable) lastItem);
-                    else
-                        selectedItems.get().remove(lastItem);
-                });
+            if (addedItem != null) {
+                JFXCheckBox checkBox = createSelectionBox(addedItem);
 
-                if (lastItem instanceof HBox)
-                    ((HBox) lastItem).getChildren().add(0, checkBox);
-                else if (lastItem instanceof Node) {
-                    HBox wrapper = new HBox((Node) lastItem);
-                    int indexToReplace = listView.getItems().indexOf(lastItem);
+                if (addedItem instanceof HBox)
+                    ((HBox) addedItem).getChildren().add(0, checkBox);
+                else if (addedItem instanceof Node) {
+                    HBox wrapper = new HBox((Node) addedItem);
+                    int indexToReplace = listView.getItems().indexOf(addedItem);
                     listView.getItems().set(indexToReplace, (T) wrapper);
                 } else {
-                    Label wrapper = new Label(String.valueOf(lastItem));
-                    int indexToReplace = listView.getItems().indexOf(lastItem);
+                    Label wrapper = new Label(String.valueOf(addedItem));
+                    int indexToReplace = listView.getItems().indexOf(addedItem);
                     listView.getItems().set(indexToReplace, (T) wrapper);
                 }
             }
@@ -141,8 +147,27 @@ public class DataList<T> extends DataContainer<T> {
     }
 
 
+    private JFXCheckBox createSelectionBox(T item) {
+        JFXCheckBox checkBox = new JFXCheckBox();
+        checkBox.selectedProperty().bindBidirectional(((Selectable) item).selectedProperty());
+        checkBox.setOnAction(event -> {
+            if (((Selectable) item).isSelected())
+                selectedItems.get().add((Selectable) item);
+            else
+                selectedItems.get().remove(item);
+        });
+
+        return checkBox;
+    }
+
+
     @Override
     public void removeSelectionBox() {
 
+    }
+
+
+    public ListView<T> getListView() {
+        return listView;
     }
 }

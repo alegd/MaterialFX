@@ -115,7 +115,7 @@ public class DataTable<T extends RecursiveTreeObject<T>> extends DataContainer<T
     private void setRowFactory() {
         treeTableView.setRowFactory(tv -> {
             TreeTableRow<T> row = new TreeTableRow<>();
-            row.setOnMouseClicked(event -> this.dataProvider.onItemSelected(event, row));
+            row.setOnMouseClicked(event -> this.dataProvider.onItemSelected(event, row.getTreeItem()));
             return row;
         });
     }

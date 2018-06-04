@@ -1,7 +1,5 @@
 import com.jfoenix.controls.JFXDecorator;
 import controller.DataListController;
-import controller.DataTableController;
-import io.alegd.materialtouch.datatable.DataTable;
 import io.datafx.controller.ViewConfiguration;
 import io.datafx.controller.flow.Flow;
 import io.datafx.controller.flow.FlowHandler;
@@ -12,14 +10,14 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application{
+public class Main extends Application {
 
     public void start(Stage primaryStage) throws Exception {
         ViewFlowContext context = new ViewFlowContext();
         ViewConfiguration viewConfiguration = new ViewConfiguration();
         // Spanish by default
         // Create and register in context the main flow
-        Flow mainFlow = new Flow(DataTableController.class);
+        Flow mainFlow = new Flow(DataListController.class);
         // Create and register in context the main flow handler
         FlowHandler mainFlowHandler = new FlowHandler(mainFlow, context, viewConfiguration);
 
