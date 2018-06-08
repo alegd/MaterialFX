@@ -10,7 +10,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TreeItem;
 import javafx.scene.layout.HBox;
 
 /**
@@ -18,7 +17,7 @@ import javafx.scene.layout.HBox;
  */
 public class DataList<T> extends DataContainer<T> {
 
-    private ListView<T> listView;
+    private JFXListView<T> listView;
 
     private JFXButton selectAllButton = new JFXButton();
 
@@ -36,8 +35,7 @@ public class DataList<T> extends DataContainer<T> {
 
         withEmptyState(null, null, true);
 
-        listView.getSelectionModel().selectedItemProperty()
-                .addListener((obs, oldVal, newVal) -> dataProvider.onItemSelected(null, newVal));
+        addItemSelectionListener();
         setupSelectAllButton();
 
         toolBarActions = getContextualHeader().getRightItems();
@@ -49,27 +47,47 @@ public class DataList<T> extends DataContainer<T> {
     }
 
 
+    private void addItemSelectionListener() {
+        listView.getItems().addListener((ListChangeListener<? super T>) observable -> {
+            observable.next(); // Mandatory call before any action with observable
+            T addedItem = observable.getAddedSubList().get(0);
+
+            if (addedItem instanceof String) {
+                Label itemWrapper = new Label((String) addedItem);
+                itemWrapper.setOnMouseClicked(e -> dataProvider.onItemSelected(e, itemWrapper));
+            } else if (addedItem instanceof Node) {
+                ((Node) addedItem).setOnMouseClicked(e -> dataProvider.onItemSelected(e, addedItem));
+            }
+        });
+    }
+
+
     private void setupSelectAllButton() {
         selectAllButton.setGraphic(Constant.getIcon("select_all", 20));
         selectAllButton.setOnMouseClicked(e -> {
-            boolean allSelectedFlag = (selectedItems.size() == listView.getItems().size());
-            selectedItems.clear();
-
-            if (!allSelectedFlag) {
-                for (T item : listView.getItems()) {
-                    Selectable selectableItem = (Selectable) item;
-                    selectableItem.setSelected(true);
-                    selectedItems.get().add(selectableItem);
-                }
-            } else {
-                for (T item : listView.getItems()) {
-                    Selectable selectableItem = (Selectable) item;
-                    selectableItem.setSelected(false);
-                }
-
-                selectedItems.clear();
-            }
+            onSelectAll();
         });
+    }
+
+
+    private void onSelectAll() {
+        boolean allSelectedFlag = (selectedItems.size() == listView.getItems().size());
+        selectedItems.clear();
+
+        if (!allSelectedFlag) {
+            for (T item : listView.getItems()) {
+                Selectable selectableItem = (Selectable) item;
+                selectableItem.setSelected(true);
+                selectedItems.get().add(selectableItem);
+            }
+        } else {
+            for (T item : listView.getItems()) {
+                Selectable selectableItem = (Selectable) item;
+                selectableItem.setSelected(false);
+            }
+
+            selectedItems.clear();
+        }
     }
 
     /**

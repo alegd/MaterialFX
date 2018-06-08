@@ -68,7 +68,9 @@ public class DataListController implements DataProvider {
     public void setupDataContainer() {
     }
 
+
     public void onItemSelected(MouseEvent event, Object item) {
+        System.out.println("Item clicked: " + ((PizzaViewHolder) item).getName());
 
     }
 
