@@ -1,4 +1,4 @@
-package io.alegd.materialtouch.dataload;
+package com.alegd.materialfx.dataload;
 
 /**
  * @author J. Alejandro Guerra Denis

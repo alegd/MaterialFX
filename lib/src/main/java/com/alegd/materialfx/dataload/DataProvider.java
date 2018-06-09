@@ -1,4 +1,4 @@
-package io.alegd.materialtouch.dataload;
+package com.alegd.materialfx.dataload;
 
 import javafx.scene.input.MouseEvent;
 

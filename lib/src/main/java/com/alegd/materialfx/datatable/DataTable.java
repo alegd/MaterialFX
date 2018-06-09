@@ -1,5 +1,6 @@
-package io.alegd.materialtouch.datatable;
+package com.alegd.materialfx.datatable;
 
+import com.alegd.materialfx.DataContainer;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
@@ -7,9 +8,8 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.sun.javafx.tk.FontLoader;
 import com.sun.javafx.tk.Toolkit;
-import io.alegd.materialtouch.DataContainer;
-import io.alegd.materialtouch.Selectable;
-import io.alegd.materialtouch.dataload.Exportable;
+import com.alegd.materialfx.Selectable;
+import com.alegd.materialfx.dataload.Exportable;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;

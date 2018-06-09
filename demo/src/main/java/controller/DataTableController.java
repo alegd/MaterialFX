@@ -2,9 +2,9 @@ package controller;
 
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import io.alegd.materialtouch.Selectable;
-import io.alegd.materialtouch.dataload.DataProvider;
-import io.alegd.materialtouch.datatable.DataTable;
+import com.alegd.materialfx.Selectable;
+import com.alegd.materialfx.dataload.DataProvider;
+import com.alegd.materialfx.datatable.DataTable;
 import io.datafx.controller.ViewController;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;

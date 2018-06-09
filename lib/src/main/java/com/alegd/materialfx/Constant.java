@@ -1,4 +1,4 @@
-package io.alegd.materialtouch;
+package com.alegd.materialfx;
 
 import com.jfoenix.svg.SVGGlyph;
 import com.jfoenix.svg.SVGGlyphLoader;

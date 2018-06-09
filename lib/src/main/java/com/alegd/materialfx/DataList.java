@@ -1,9 +1,9 @@
-package io.alegd.materialtouch;
+package com.alegd.materialfx;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListView;
-import io.alegd.materialtouch.dataload.Exportable;
+import com.alegd.materialfx.dataload.Exportable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;

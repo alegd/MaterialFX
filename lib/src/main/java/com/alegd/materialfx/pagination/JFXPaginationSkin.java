@@ -1,4 +1,4 @@
-package io.alegd.materialtouch.pagination;
+package com.alegd.materialfx.pagination;
 
 import com.jfoenix.controls.JFXComboBox;
 import com.sun.javafx.scene.control.skin.PaginationSkin;

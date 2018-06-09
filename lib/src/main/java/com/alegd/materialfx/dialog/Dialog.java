@@ -1,9 +1,9 @@
-package io.alegd.materialtouch.dialog;
+package com.alegd.materialfx.dialog;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
-import io.alegd.materialtouch.Constant;
+import com.alegd.materialfx.Constant;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;

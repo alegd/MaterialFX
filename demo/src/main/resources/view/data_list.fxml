@@ -2,7 +2,7 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXToolbar?>
-<?import io.alegd.materialtouch.DataList?>
+<?import com.alegd.materialfx.DataList?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>

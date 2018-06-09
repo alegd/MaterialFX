@@ -1,6 +1,6 @@
-package io.alegd.materialtouch.dataload;
+package com.alegd.materialfx.dataload;
 
-import io.alegd.materialtouch.DataContainer;
+import com.alegd.materialfx.DataContainer;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;

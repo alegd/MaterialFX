@@ -1,4 +1,4 @@
-package io.alegd.materialtouch;
+package com.alegd.materialfx;
 
 import javafx.beans.property.BooleanProperty;
 

@@ -1,7 +1,7 @@
-package io.alegd.materialtouch.datatable;
+package com.alegd.materialfx.datatable;
 
 import com.jfoenix.controls.JFXCheckBox;
-import io.alegd.materialtouch.Selectable;
+import com.alegd.materialfx.Selectable;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBox;

@@ -1,4 +1,4 @@
-package io.alegd.materialtouch.dialog;
+package com.alegd.materialfx.dialog;
 
 /**
  * @author J. Alejandro Guerra Denis

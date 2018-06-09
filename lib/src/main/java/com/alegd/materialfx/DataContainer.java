@@ -1,10 +1,10 @@
-package io.alegd.materialtouch;
+package com.alegd.materialfx;
 
+import com.alegd.materialfx.dataload.DataProvider;
+import com.alegd.materialfx.dataload.Exportable;
+import com.alegd.materialfx.pagination.JFXPagination;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToolbar;
-import io.alegd.materialtouch.dataload.DataProvider;
-import io.alegd.materialtouch.dataload.Exportable;
-import io.alegd.materialtouch.pagination.JFXPagination;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -20,9 +20,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * @author J. Alejandro Guerra Denis
@@ -72,8 +74,12 @@ public abstract class DataContainer<T> extends BorderPane {
 
     protected JFXPagination pagination;
 
+    private ResourceBundle resources;
+
 
     protected DataContainer() {
+        resources = ResourceBundle.getBundle("i8n.material-fx");
+
         if (viewHolders == null)
             viewHolders = FXCollections.observableArrayList();
 
@@ -83,16 +89,17 @@ public abstract class DataContainer<T> extends BorderPane {
         selectedItems.addListener((observable, oldValue, newValue) -> {
             if (newValue.size() > 0) {
                 setTop(contextualHeaderProperty().get());
+                String secondArg = (newValue.size() > 1) ? "s" : "";
 
-                if (newValue.size() > 1)
-                    contextualHeaderTitle.setText(newValue.size() + " elementos seleccionados");
-                else
-                    contextualHeaderTitle.setText("1 elemento seleccionado");
+                String message = MessageFormat.format(resources.getString("selected_item"),
+                        newValue.size(), secondArg);
+                contextualHeaderTitle.setText(message);
             } else {
                 setTop(header.get());
             }
         });
     }
+
 
     /**
      *
@@ -128,12 +135,12 @@ public abstract class DataContainer<T> extends BorderPane {
         if (exportable != null) {
             JFXButton printButton = new JFXButton(null,
                     Constant.getIcon("print", 20, Color.GRAY));
-            printButton.setTooltip(new Tooltip("Imprimir datos"));
+            printButton.setTooltip(new Tooltip(resources.getString("print")));
             printButton.setOnMouseClicked(event -> exportable.printData());
 
             JFXButton exportButton = new JFXButton(null,
                     Constant.getIcon("file_download", 18, Color.GRAY));
-            exportButton.setTooltip(new Tooltip("Exportar datos"));
+            exportButton.setTooltip(new Tooltip(resources.getString("export_data")));
             exportButton.setOnMouseClicked(event -> exportable.exportData());
 
             List<Node> moreActions = new ArrayList<>();
@@ -170,19 +177,17 @@ public abstract class DataContainer<T> extends BorderPane {
      *                 rid of the emptiness.
      */
     public synchronized void withEmptyState(String title, String subtitle) {
-        Label titleLabel = new Label("Aún no existen datos");
+        Label titleLabel = new Label(resources.getString("no_data_title"));
         titleLabel.getStyleClass().add("main-text");
 
-        Label subtitleLabel = new Label("Haz click en el signo + para añadir nuevos datos");
+        Label subtitleLabel = new Label("");
         subtitleLabel.getStyleClass().add("suggestion-text");
 
         if (title != null)
-            if (!title.equalsIgnoreCase(""))
-                titleLabel.setText(title);
+            titleLabel.setText(title);
 
         if (subtitle != null)
-            if (!subtitle.equalsIgnoreCase(""))
-                subtitleLabel.setText(subtitle);
+            subtitleLabel.setText(subtitle);
 
         mEmptyState = new VBox(8, titleLabel, subtitleLabel);
         mEmptyState.getStyleClass().add("empty-state");
